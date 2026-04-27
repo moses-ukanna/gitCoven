@@ -1,0 +1,65 @@
+// GitCoven — Recovery & Undo — Phases 8-9
+// This file contains phases 8-9
+
+phases.push(
+{
+  title:"Undoing Changes",sub:"restore, revert, reset, reflog — getting out of trouble",
+  sections:[
+    {label:"The undo toolkit",content:`<div class="diagram"><div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2);line-height:2.1">
+<div><span style="color:var(--accent-orange)">git restore file</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ discard working dir changes (irreversible)</div>
+<div><span style="color:var(--accent-orange)">git restore --staged</span>&nbsp;&nbsp;→ unstage without losing changes</div>
+<div><span style="color:var(--accent-blue)">git commit --amend</span>&nbsp;&nbsp;&nbsp;→ fix the LAST commit (before push only)</div>
+<div><span style="color:var(--accent)">git revert HEAD</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ safe undo (adds new commit)</div>
+<div><span style="color:var(--accent-red)">git reset --soft</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ undo commit, keep staged</div>
+<div><span style="color:var(--accent-red)">git reset --mixed</span>&nbsp;&nbsp;&nbsp;&nbsp;→ undo commit, unstage</div>
+<div><span style="color:var(--accent-red)">git reset --hard</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ undo commit, DELETE ⚠️</div>
+</div></div>`},
+    {label:"restore, amend, revert",codeblock:{lang:"bash",code:`<span class="hl">git restore</span> app.js             <span class="cmt"># discard working dir changes</span>
+<span class="hl">git restore</span> --staged app.js    <span class="cmt"># unstage a file</span>
+<span class="hl">git commit</span> --amend -m <span class="str">"Fix"</span>   <span class="cmt"># fix last commit msg</span>
+<span class="hl">git revert</span> HEAD                <span class="cmt"># safe undo via new commit</span>
+<span class="hl">git revert</span> a1b2c3d             <span class="cmt"># revert any commit by hash</span>`}},
+    {label:"git reset",codeblock:{lang:"bash",code:`<span class="hl">git reset</span> --soft HEAD~1    <span class="cmt"># keep staged</span>
+<span class="hl">git reset</span> HEAD~1           <span class="cmt"># keep in working dir (default)</span>
+<span class="hl">git reset</span> --hard HEAD~1   <span class="cmt"># ⚠️ DELETE everything</span>`}},
+    {label:"git reflog — the safety net",codeblock:{lang:"bash",code:`<span class="hl">git reflog</span>
+<span class="cmt"># HEAD@{0}: reset: moving to HEAD~1</span>
+<span class="cmt"># HEAD@{1}: commit: Feature you 'lost'  ← recover this!</span>
+<span class="hl">git reset</span> --hard HEAD@{1}   <span class="cmt"># restore to lost commit</span>
+<span class="hl">git switch</span> -c recovered HEAD@{1}  <span class="cmt"># or branch from it</span>`}}
+  ],
+  challenges:[
+    {q:"A bad commit was pushed to the shared main branch. What is the safest command to undo it without rewriting history?",scenario:"5 teammates have already pulled this commit. You cannot use reset. What do you use?",accept:["git revert head","git revert HEAD","git revert HEAD~0"],feedback:"git revert creates a NEW commit that undoes the changes of the target commit. History is preserved — safe for shared branches. Never use git reset --hard on commits others have already pulled."},
+    {q:"Type the command to undo the last commit but keep all its changes ready in the staging area.",scenario:"You committed too soon and want to add one more file to the same commit.",accept:["git reset --soft head~1","git reset --soft HEAD~1","git reset --soft head~1 "],feedback:"git reset --soft HEAD~1 moves the branch pointer back by one commit but leaves all the changes staged. You can then stage additional files and commit everything together."},
+    {q:"You ran git reset --hard and seem to have lost 3 commits. What command do you run FIRST to find those lost commits?",scenario:"Panic. Your work seems gone. What is your immediate next command?",accept:["git reflog","git reflog ","git reflog show"],feedback:"git reflog records every single movement of HEAD — including commits that appear deleted. You'll see HEAD@{N} entries for each past state. Find the hash you need and git reset --hard to it or branch from it."}
+  ]
+},
+{
+  title:"Stashing",sub:"Shelving work-in-progress without committing",
+  sections:[
+    {label:"What is stashing?",cards:[
+      {title:"The problem it solves",body:"You're halfway through a feature when a critical bug is reported. You can't commit half-done work. <code>git stash</code> saves your WIP to a temporary stack and restores a clean working directory."},
+      {title:"The stash stack",body:"LIFO (last in, first out). Most recent is <code>stash@{0}</code>, next is <code>stash@{1}</code>, etc. You can have multiple stashes."}
+    ]},
+    {label:"Stash commands",codeblock:{lang:"bash",code:`<span class="hl">git stash</span>                          <span class="cmt"># save WIP (tracked files)</span>
+<span class="hl">git stash</span> -u                       <span class="cmt"># include untracked files</span>
+<span class="hl">git stash push</span> -m <span class="str">"half-done form"</span>  <span class="cmt"># named stash</span>
+<span class="hl">git stash list</span>                     <span class="cmt"># see all stashes</span>
+<span class="hl">git stash show</span> -p                  <span class="cmt"># full diff of latest stash</span>
+<span class="hl">git stash pop</span>                      <span class="cmt"># restore + DELETE stash</span>
+<span class="hl">git stash apply</span>                    <span class="cmt"># restore + KEEP stash</span>
+<span class="hl">git stash apply</span> stash@{2}          <span class="cmt"># restore specific stash</span>
+<span class="hl">git stash drop</span>                     <span class="cmt"># delete latest</span>
+<span class="hl">git stash clear</span>                    <span class="cmt"># delete ALL stashes</span>`}},
+    {label:"pop vs apply",cards:[
+      {title:"git stash pop",body:"Restores the stash AND removes it from the list. Use when you're done with it."},
+      {title:"git stash apply",body:"Restores the stash but KEEPS it in the list. Useful for applying the same stash to multiple branches."}
+    ]}
+  ],
+  challenges:[
+    {q:"Type the command to save your current work-in-progress to the stash with the label 'login form half done'.",scenario:"You need to urgently switch branches but aren't ready to commit your current changes.",accept:["git stash push -m \"login form half done\"","git stash push -m 'login form half done'","git stash save \"login form half done\"","git stash save 'login form half done'"],feedback:"git stash push -m 'message' creates a named stash. Named stashes are much easier to identify later when you have multiple stashes. git stash save is the older deprecated syntax."},
+    {q:"Type the command to restore your most recent stash AND remove it from the stash list.",scenario:"You're back on your feature branch and want to continue where you left off.",accept:["git stash pop","git stash pop "],feedback:"git stash pop is the most commonly used stash command. It applies the top stash and removes it from the stack. If you want to keep it in the list (to apply to other branches), use git stash apply instead."},
+    {q:"Type the command to see a full diff of what is inside your most recent stash.",scenario:"You have 3 stashes and can't remember what's in the latest one. You want to see the actual changes.",accept:["git stash show -p","git stash show --patch","git stash show -p stash@{0}"],feedback:"git stash show -p (patch) shows the full diff of the stash. Without -p, it shows a summary of which files changed. Add stash@{N} to inspect a specific stash."}
+  ]
+}
+);
