@@ -6,7 +6,8 @@ const completed = new Set();
 // challengeState[phaseIdx] = { solved: [false, false, ...], attempts: [0, 0, ...] }
 const challengeState = phases.map(p => ({
   solved: new Array(p.challenges.length).fill(false),
-  attempts: new Array(p.challenges.length).fill(0)
+  attempts: new Array(p.challenges.length).fill(0),
+  hintsUsed: new Array(p.challenges.length).fill(false)
 }));
 
 function isPhaseUnlocked(idx) {

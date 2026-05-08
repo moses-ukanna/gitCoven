@@ -1,0 +1,17 @@
+[33mcommit 77843ec7ea4c85d9fd5ded5b9b48551d0925d21d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Moses Ukanna <moses-ukanna@users.noreply.github.com>
+Date:   Mon Apr 27 05:10:08 2026 +0100
+
+    Add Supabase auth: Google, GitHub, Magic Link, Email
+
+[33mcommit 179c8e2df4c603068514d86f696906b85d74b257[m
+Author: Moses Ukanna <moses-ukanna@users.noreply.github.com>
+Date:   Sat Apr 25 20:11:54 2026 +0100
+
+    Rename to index.html for Vercel
+
+[33mcommit 5d6f1b228e7c2d6604732ef4f780c3f4f9e29401[m
+Author: Moses Ukanna <moses-ukanna@users.noreply.github.com>
+Date:   Sat Apr 25 19:20:44 2026 +0100
+
+    upload gitCoven

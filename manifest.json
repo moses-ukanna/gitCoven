@@ -1,0 +1,18 @@
+{
+  "name": "GitCoven — Learn Git From Scratch",
+  "short_name": "GitCoven",
+  "description": "From newbie to enterprise pro. 28 phases of Git mastery by WiredHash.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0e13",
+  "theme_color": "#3fb950",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='96' fill='%230d1117'/><path d='M100 220 Q90 380 256 400 Q422 380 412 220 Z' fill='%230d2818' stroke='%233fb950' stroke-width='16' stroke-linejoin='round'/><rect x='80' y='180' width='352' height='50' rx='25' fill='%2321262d' stroke='%233fb950' stroke-width='14'/><circle cx='256' cy='310' r='24' fill='%233fb950'/><circle cx='180' cy='310' r='16' fill='%23444c56'/><circle cx='332' cy='310' r='16' fill='%23444c56'/><line x1='196' y1='310' x2='232' y2='310' stroke='%233fb950' stroke-width='10'/><line x1='280' y1='310' x2='316' y2='310' stroke='%233fb950' stroke-width='10'/><path d='M190 170 Q170 120 190 70' stroke='%233fb950' stroke-width='14' stroke-linecap='round' fill='none' opacity='.5'/><path d='M256 170 Q236 110 256 60' stroke='%233fb950' stroke-width='14' stroke-linecap='round' fill='none' opacity='.8'/><path d='M322 170 Q342 120 322 70' stroke='%233fb950' stroke-width='14' stroke-linecap='round' fill='none' opacity='.5'/></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -58,6 +58,8 @@ function buildChallengeSection(phaseIdx) {
   p.challenges.forEach((q, qi) => {
     const solved = cs.solved[qi];
     const attempts = cs.attempts[qi];
+    const hintUsed = cs.hintsUsed[qi];
+    const hasHint = !!q.hint;
     const cardClass = solved ? 'solved' : '';
     html += `<div class="challenge-card ${cardClass}" id="ccard_${phaseIdx}_${qi}">
       <div class="challenge-q-header">
@@ -68,6 +70,10 @@ function buildChallengeSection(phaseIdx) {
           ${attempts > 0 && !solved ? `<div class="attempts-badge ${attempts >= 3 ? 'warning' : ''}">✗ ${attempts} failed attempt${attempts>1?'s':''}</div>` : ''}
         </div>
       </div>
+      ${hasHint ? `<div class="hint-row" id="hintrow_${phaseIdx}_${qi}">
+        ${hintUsed ? `<div class="hint-revealed"><span class="hint-icon">💡</span><span>${q.hint}</span></div>` :
+          (solved ? '' : `<button class="hint-btn" onclick="showHint(${phaseIdx},${qi})"><span class="hint-icon">💡</span> Show Hint</button>`)}
+      </div>` : ''}
       <div class="challenge-input-row">
         <div class="challenge-input-wrap">
           <input class="challenge-input" id="cinput_${phaseIdx}_${qi}"
@@ -175,6 +181,19 @@ function submitChallenge(phaseIdx, qIdx) {
   }
 }
 
+// ─── HINT SYSTEM ──────────────────────────────────────────────
+function showHint(phaseIdx, qIdx) {
+  const cs = challengeState[phaseIdx];
+  const q = phases[phaseIdx].challenges[qIdx];
+  if (!q.hint || cs.hintsUsed[qIdx]) return;
+  cs.hintsUsed[qIdx] = true;
+  const row = document.getElementById(`hintrow_${phaseIdx}_${qIdx}`);
+  if (row) {
+    row.innerHTML = `<div class="hint-revealed"><span class="hint-icon">💡</span><span>${q.hint}</span></div>`;
+  }
+  saveProgress();
+}
+
 // ─── COPY CODE ────────────────────────────────────────────────
 function copyCode(id) {
   const pre = document.getElementById('pre_' + id);
@@ -193,18 +212,25 @@ function showComplete() {
   document.getElementById('prog-fill').style.width = '100%';
   document.getElementById('prog-text').textContent = `${phases.length} / ${phases.length}`;
   const totalChallenges = phases.reduce((a,p) => a + p.challenges.length, 0);
-  const totalLab = phases.reduce((a,p) => a + (p.lab ? p.lab.steps ? p.lab.steps.length : 0 : 0), 0);
+  const totalHints = challengeState.reduce((a,cs) => a + cs.hintsUsed.filter(Boolean).length, 0);
   document.getElementById('content-area').innerHTML = `
     <div class="complete-screen">
       <div class="complete-icon">🎓</div>
       <div class="complete-title" id="complete-title">You did it, ${userName || 'Apprentice'}!</div>
       <p class="complete-sub">All 28 phases of GitCoven complete. Every challenge crushed. You walked in as a newbie and leave as an enterprise pro. Well done, ${userName || 'Apprentice'}.</p>
       <div class="stats-row">
-        <div class="stat-box"><div class="stat-num">25</div><div class="stat-label">Phases completed</div></div>
+        <div class="stat-box"><div class="stat-num">${phases.length}</div><div class="stat-label">Phases completed</div></div>
         <div class="stat-box"><div class="stat-num">${totalChallenges}</div><div class="stat-label">Challenges crushed</div></div>
-        <div class="stat-box"><div class="stat-num">0</div><div class="stat-label">Hints used</div></div>
+        <div class="stat-box"><div class="stat-num">${totalHints}</div><div class="stat-label">Hints used</div></div>
       </div>
       <button class="btn btn-accent" style="margin-top:28px;padding:10px 28px;font-size:14px" onclick="goto(0)">Review from the beginning</button>
+      <br>
+      <button class="cert-btn" onclick="generateCertificate()" style="margin-top:12px;">
+        &#x1F4DC; Download Certificate
+      </button>
+      <button onclick="openLeaderboard()" style="display:inline-flex;align-items:center;gap:8px;padding:10px 24px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);font-family:'Syne',sans-serif;font-size:15px;font-weight:600;color:var(--text1);cursor:pointer;margin-top:8px;transition:all .15s;">
+        &#x1F3C6; View Leaderboard
+      </button>
     </div>`;
   ['next-btn','next-btn2'].forEach(id => {
     const b = document.getElementById(id);

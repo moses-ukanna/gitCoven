@@ -7,6 +7,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#3fb950">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -73,6 +77,26 @@
           <input class="auth-input" id="login-password" type="password" placeholder="••••••••" autocomplete="current-password" />
         </div>
         <button class="auth-btn" onclick="doLogin()">Sign In →</button>
+        <div style="text-align:center;margin-top:10px;">
+          <a href="#" onclick="switchTab('forgot');return false;" style="font-size:12px;color:var(--accent-blue);font-family:'JetBrains Mono',monospace;text-decoration:none;">Forgot your password?</a>
+        </div>
+      </div>
+
+      <!-- FORGOT PASSWORD FORM -->
+      <div id="form-forgot" style="display:none">
+        <div style="text-align:center;margin-bottom:16px;">
+          <div style="font-size:28px;margin-bottom:8px;">🔑</div>
+          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:var(--text0);margin-bottom:4px;">Reset Your Password</div>
+          <div style="font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace;">Enter your email and we'll send a reset link.</div>
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Email</label>
+          <input class="auth-input" id="forgot-email" type="email" placeholder="you@example.com" autocomplete="email" />
+        </div>
+        <button class="auth-btn" onclick="doForgotPassword()">Send Reset Link →</button>
+        <div style="text-align:center;margin-top:10px;">
+          <a href="#" onclick="switchTab('login');return false;" style="font-size:12px;color:var(--text2);font-family:'JetBrains Mono',monospace;text-decoration:none;">← Back to Sign In</a>
+        </div>
       </div>
 
       <!-- REGISTER FORM -->
@@ -205,7 +229,7 @@
 <div id="main">
   <div id="topbar">
     <div><div class="topbar-phase" id="tb-phase">PHASE 01</div><div class="topbar-title" id="tb-title">Loading…</div></div>
-    <div class="topbar-user" id="topbar-user"></div><div class="topbar-actions">
+    <button onclick="openLeaderboard()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:14px;color:var(--text2);transition:all .12s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text2)'">🏆</button><div class="topbar-user" id="topbar-user"></div><div class="topbar-actions">
       <button class="btn" onclick="navigate(-1)" id="prev-btn">← Prev</button>
       <button class="btn btn-accent btn-locked" onclick="navigate(1)" id="next-btn">Next →</button>
     </div>
@@ -229,7 +253,24 @@
 <script src="js/phases/platforms.js"></script>
 <script src="js/state.js"></script>
 <script src="js/render.js"></script>
+<script src="js/certificate.js"></script>
 <script src="js/auth.js"></script>
 
+<!-- PWA INSTALL BANNER -->
+<div id="pwa-banner">
+  <span style="font-size:24px;">&#x1F4F1;</span>
+  <div class="pwa-text">
+    <strong>Install GitCoven</strong>
+    Add to your home screen for offline access
+  </div>
+  <button class="pwa-install-btn" onclick="installPWA()">Install</button>
+  <button class="pwa-close-btn" onclick="dismissPWA()">&#x2715;</button>
+</div>
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(function(e) { console.log('SW registration skipped:', e); });
+}
+</script>
 </body>
 </html>
