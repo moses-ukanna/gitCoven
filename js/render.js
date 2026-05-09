@@ -59,7 +59,9 @@ function buildChallengeSection(phaseIdx) {
     const solved = cs.solved[qi];
     const attempts = cs.attempts[qi];
     const hintUsed = cs.hintsUsed[qi];
+    const answerUsed = cs.answersUsed[qi];
     const hasHint = !!q.hint;
+    const hasAnswer = !!q.answer;
     const cardClass = solved ? 'solved' : '';
     html += `<div class="challenge-card ${cardClass}" id="ccard_${phaseIdx}_${qi}">
       <div class="challenge-q-header">
@@ -70,9 +72,13 @@ function buildChallengeSection(phaseIdx) {
           ${attempts > 0 && !solved ? `<div class="attempts-badge ${attempts >= 3 ? 'warning' : ''}">✗ ${attempts} failed attempt${attempts>1?'s':''}</div>` : ''}
         </div>
       </div>
-      ${hasHint ? `<div class="hint-row" id="hintrow_${phaseIdx}_${qi}">
+      ${hasHint || hasAnswer ? `<div class="hint-row" id="hintrow_${phaseIdx}_${qi}">
         ${hintUsed ? `<div class="hint-revealed"><span class="hint-icon">💡</span><span>${q.hint}</span></div>` :
-          (solved ? '' : `<button class="hint-btn" onclick="showHint(${phaseIdx},${qi})"><span class="hint-icon">💡</span> Reveal Answer</button>`)}
+          (solved ? '' : `<button class="hint-btn" onclick="showHint(${phaseIdx},${qi})"><span class="hint-icon">💡</span> Show Hint</button>`)}
+      </div>
+      <div class="answer-row" id="answerrow_${phaseIdx}_${qi}">
+        ${answerUsed ? `<div class="answer-revealed"><span class="hint-icon">🔑</span><span>${q.answer}</span></div>` :
+          (solved ? '' : `<button class="answer-btn" onclick="showAnswer(${phaseIdx},${qi})"><span class="hint-icon">🔑</span> Reveal Answer</button>`)}
       </div>` : ''}
       <div class="challenge-input-row">
         <div class="challenge-input-wrap">
@@ -181,7 +187,7 @@ function submitChallenge(phaseIdx, qIdx) {
   }
 }
 
-// ─── HINT SYSTEM ──────────────────────────────────────────────
+// ─── HINT & ANSWER SYSTEM ─────────────────────────────────────
 function showHint(phaseIdx, qIdx) {
   const cs = challengeState[phaseIdx];
   const q = phases[phaseIdx].challenges[qIdx];
@@ -190,6 +196,18 @@ function showHint(phaseIdx, qIdx) {
   const row = document.getElementById(`hintrow_${phaseIdx}_${qIdx}`);
   if (row) {
     row.innerHTML = `<div class="hint-revealed"><span class="hint-icon">💡</span><span>${q.hint}</span></div>`;
+  }
+  saveProgress();
+}
+
+function showAnswer(phaseIdx, qIdx) {
+  const cs = challengeState[phaseIdx];
+  const q = phases[phaseIdx].challenges[qIdx];
+  if (!q.answer || cs.answersUsed[qIdx]) return;
+  cs.answersUsed[qIdx] = true;
+  const row = document.getElementById(`answerrow_${phaseIdx}_${qIdx}`);
+  if (row) {
+    row.innerHTML = `<div class="answer-revealed"><span class="hint-icon">🔑</span><span>${q.answer}</span></div>`;
   }
   saveProgress();
 }
@@ -213,6 +231,7 @@ function showComplete() {
   document.getElementById('prog-text').textContent = `${phases.length} / ${phases.length}`;
   const totalChallenges = phases.reduce((a,p) => a + p.challenges.length, 0);
   const totalHints = challengeState.reduce((a,cs) => a + cs.hintsUsed.filter(Boolean).length, 0);
+  const totalAnswers = challengeState.reduce((a,cs) => a + cs.answersUsed.filter(Boolean).length, 0);
   document.getElementById('content-area').innerHTML = `
     <div class="complete-screen">
       <div class="complete-icon">🎓</div>
@@ -222,6 +241,7 @@ function showComplete() {
         <div class="stat-box"><div class="stat-num">${phases.length}</div><div class="stat-label">Phases completed</div></div>
         <div class="stat-box"><div class="stat-num">${totalChallenges}</div><div class="stat-label">Challenges crushed</div></div>
         <div class="stat-box"><div class="stat-num">${totalHints}</div><div class="stat-label">Hints used</div></div>
+        <div class="stat-box"><div class="stat-num">${totalAnswers}</div><div class="stat-label">Answers revealed</div></div>
       </div>
       <button class="btn btn-accent" style="margin-top:28px;padding:10px 28px;font-size:14px" onclick="goto(0)">Review from the beginning</button>
       <br>

@@ -7,7 +7,8 @@ const completed = new Set();
 const challengeState = phases.map(p => ({
   solved: new Array(p.challenges.length).fill(false),
   attempts: new Array(p.challenges.length).fill(0),
-  hintsUsed: new Array(p.challenges.length).fill(false)
+  hintsUsed: new Array(p.challenges.length).fill(false),
+  answersUsed: new Array(p.challenges.length).fill(false)
 }));
 
 function isPhaseUnlocked(idx) {
@@ -27,7 +28,18 @@ function normalize(str) {
 function checkAnswer(phaseIdx, qIdx, userInput) {
   const q = phases[phaseIdx].challenges[qIdx];
   const norm = normalize(userInput);
-  return q.accept.some(a => normalize(a) === norm);
+  // 1. Exact match against accept list (works for commands)
+  if (q.accept.some(a => normalize(a) === norm)) return true;
+  // 2. Keyword match — if challenge has keywords array,
+  //    check ALL required keyword groups are present in the answer.
+  //    Each entry can be "word" or "word1|word2" (alternatives).
+  if (q.keywords && q.keywords.length) {
+    return q.keywords.every(function(kw) {
+      var alts = kw.toLowerCase().split('|');
+      return alts.some(function(alt) { return norm.indexOf(alt.trim()) !== -1; });
+    });
+  }
+  return false;
 }
 
 // ─── NAV ─────────────────────────────────────────────────────

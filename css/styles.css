@@ -249,6 +249,15 @@ code{font-family:'JetBrains Mono',monospace;font-size:12.5px;background:var(--bg
 @keyframes hintFadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
 .challenge-card.solved .hint-row{opacity:.6;}
 
+/* ANSWER REVEAL */
+.answer-row{padding:0 18px 12px;}
+.answer-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:rgba(136,98,234,.08);border:1px solid rgba(136,98,234,.25);border-radius:var(--radius);font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;color:#8b6cf0;cursor:pointer;transition:all .15s;}
+.answer-btn:hover{background:rgba(136,98,234,.14);border-color:rgba(136,98,234,.4);color:#a78bfa;}
+.answer-btn .hint-icon{font-size:13px;}
+.answer-revealed{display:flex;gap:8px;align-items:flex-start;padding:10px 14px;background:rgba(136,98,234,.06);border:1px solid rgba(136,98,234,.15);border-radius:var(--radius);font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.6;color:#a78bfa;animation:hintFadeIn .3s ease;}
+.answer-revealed .hint-icon{flex-shrink:0;font-size:14px;margin-top:1px;}
+.challenge-card.solved .answer-row{opacity:.6;}
+
 /* LOCK BAR — shown when not all challenges solved */
 .lock-bar{background:linear-gradient(135deg,#1a0f0f,#1f1214);border:1px solid var(--accent-red);border-radius:var(--radius-lg);padding:18px 24px;display:flex;align-items:center;gap:16px;margin-top:8px;}
 .lock-bar.unlocked{background:linear-gradient(135deg,#0d2818,#0a1f10);border-color:var(--accent);}

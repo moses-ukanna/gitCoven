@@ -43,7 +43,7 @@ async function saveProgress() {
   var pd = {
     current_phase: current,
     completed_phases: Array.from(completed),
-    challenge_data: challengeState.map(function(cs) { return { solved: cs.solved, attempts: cs.attempts, hintsUsed: cs.hintsUsed }; })
+    challenge_data: challengeState.map(function(cs) { return { solved: cs.solved, attempts: cs.attempts, hintsUsed: cs.hintsUsed, answersUsed: cs.answersUsed }; })
   };
   // Save to localStorage always (instant, offline-safe)
   try { localStorage.setItem('gc_progress', JSON.stringify(pd)); } catch(e) {}
@@ -76,6 +76,7 @@ function applyProgressData(d) {
       challengeState[i].solved = cd[i].solved || [];
       challengeState[i].attempts = cd[i].attempts || [];
       challengeState[i].hintsUsed = cd[i].hintsUsed || new Array(challengeState[i].solved.length).fill(false);
+      challengeState[i].answersUsed = cd[i].answersUsed || new Array(challengeState[i].solved.length).fill(false);
     }
   }
 }
@@ -440,7 +441,7 @@ async function doLogout() {
   if (sb) await sb.auth.signOut();
   userName = ''; userEmail = ''; userId = ''; userUsername = '';
   current = 0; completed.clear();
-  challengeState.forEach(function(cs) { cs.solved.fill(false); cs.attempts.fill(0); cs.hintsUsed.fill(false); });
+  challengeState.forEach(function(cs) { cs.solved.fill(false); cs.attempts.fill(0); cs.hintsUsed.fill(false); cs.answersUsed.fill(false); });
   closeProfile();
   document.getElementById('auth-overlay').style.display = 'flex';
   switchTab('login');
@@ -449,7 +450,7 @@ async function doLogout() {
 async function doReset() {
   if (!confirm('Reset ALL your progress? This cannot be undone.')) return;
   current = 0; completed.clear();
-  challengeState.forEach(function(cs) { cs.solved.fill(false); cs.attempts.fill(0); cs.hintsUsed.fill(false); });
+  challengeState.forEach(function(cs) { cs.solved.fill(false); cs.attempts.fill(0); cs.hintsUsed.fill(false); cs.answersUsed.fill(false); });
   await saveProgress();
   closeProfile();
   renderPhase();
