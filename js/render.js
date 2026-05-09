@@ -72,7 +72,7 @@ function buildChallengeSection(phaseIdx) {
       </div>
       ${hasHint ? `<div class="hint-row" id="hintrow_${phaseIdx}_${qi}">
         ${hintUsed ? `<div class="hint-revealed"><span class="hint-icon">💡</span><span>${q.hint}</span></div>` :
-          (solved ? '' : `<button class="hint-btn" onclick="showHint(${phaseIdx},${qi})"><span class="hint-icon">💡</span> Show Hint</button>`)}
+          (solved ? '' : `<button class="hint-btn" onclick="showHint(${phaseIdx},${qi})"><span class="hint-icon">💡</span> Reveal Answer</button>`)}
       </div>` : ''}
       <div class="challenge-input-row">
         <div class="challenge-input-wrap">

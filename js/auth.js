@@ -111,16 +111,47 @@ var currentTab = 'login';
 
 function switchTab(tab) {
   currentTab = tab;
+  hideError();
+
+  // If switching TO forgot: hide everything, show only forgot form
+  if (tab === 'forgot') {
+    ['form-login','form-register','form-magic'].forEach(function(id) {
+      var el = document.getElementById(id); if (el) el.style.display = 'none';
+    });
+    var forgot = document.getElementById('form-forgot');
+    if (forgot) forgot.style.display = 'block';
+    document.querySelectorAll('.auth-tab').forEach(function(t) { t.style.display = 'none'; });
+    var oauth = document.getElementById('oauth-section');
+    var divider = document.getElementById('oauth-divider');
+    if (oauth) oauth.style.display = 'none';
+    if (divider) divider.style.display = 'none';
+    return;
+  }
+
+  // Normal tab switch — restore everything to original state
+  var forgot = document.getElementById('form-forgot');
+  if (forgot) forgot.style.display = 'none';
+
+  // Restore tabs visibility
+  document.querySelectorAll('.auth-tab').forEach(function(t) {
+    t.style.display = '';
+    t.classList.remove('active');
+  });
+  var at = document.getElementById('tab-' + tab);
+  if (at) at.classList.add('active');
+
+  // Restore OAuth section
+  var oauth = document.getElementById('oauth-section');
+  var divider = document.getElementById('oauth-divider');
+  if (oauth) oauth.style.display = 'flex';
+  if (divider) divider.style.display = 'flex';
+
+  // Show/hide forms
   var forms = ['login','register','magic'];
   for (var i = 0; i < forms.length; i++) {
     var el = document.getElementById('form-' + forms[i]);
     if (el) el.style.display = forms[i] === tab ? 'block' : 'none';
   }
-  var tabs = document.querySelectorAll('.auth-tab');
-  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
-  var at = document.getElementById('tab-' + tab);
-  if (at) at.classList.add('active');
-  hideError();
 }
 
 function showError(msg) {
@@ -196,8 +227,8 @@ async function doLogin() {
 async function doForgotPassword() {
   hideError();
   if (!sb) return showError('Auth service not loaded. Please refresh.');
-  var email = document.getElementById('login-email').value.trim();
-  if (!email) return showError('Enter your email above first, then click "Forgot password".');
+  var email = document.getElementById('forgot-email').value.trim();
+  if (!email) return showError('Please enter your email address.');
   var result = await sb.auth.resetPasswordForEmail(email, {
     redirectTo: window.location.origin + window.location.pathname
   });
@@ -209,18 +240,15 @@ async function doForgotPassword() {
 function showPasswordResetForm() {
   var overlay = document.getElementById('auth-overlay');
   overlay.style.display = 'flex';
-  // Hide all auth forms and tabs
   document.querySelectorAll('.auth-tab').forEach(function(t) { t.style.display = 'none'; });
-  ['form-login','form-register','form-magic'].forEach(function(id) {
+  ['form-login','form-register','form-magic','form-forgot'].forEach(function(id) {
     var el = document.getElementById(id);
     if (el) el.style.display = 'none';
   });
-  // Hide OAuth buttons and divider
-  var authBody = document.querySelector('.auth-body');
-  if (authBody) {
-    // Store original content for potential restoration
-    if (!authBody.dataset.original) authBody.dataset.original = '1';
-  }
+  var oauthSection = document.getElementById('oauth-section');
+  var oauthDivider = document.getElementById('oauth-divider');
+  if (oauthSection) oauthSection.style.display = 'none';
+  if (oauthDivider) oauthDivider.style.display = 'none';
   // Show reset form
   var resetForm = document.getElementById('form-reset-password');
   if (resetForm) {
@@ -542,6 +570,7 @@ document.addEventListener('keydown', function(e) {
   if (currentTab === 'login') doLogin();
   else if (currentTab === 'register') doRegister();
   else if (currentTab === 'magic') doMagicLink();
+  else if (currentTab === 'forgot') doForgotPassword();
 });
 
 // ─── STARTUP ──────────────────────────────────────────────────
