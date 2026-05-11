@@ -45,8 +45,11 @@ async function saveProgress() {
     completed_phases: Array.from(completed),
     challenge_data: challengeState.map(function(cs) { return { solved: cs.solved, attempts: cs.attempts, hintsUsed: cs.hintsUsed, answersUsed: cs.answersUsed }; })
   };
-  // Save to localStorage always (instant, offline-safe)
-  try { localStorage.setItem('gc_progress', JSON.stringify(pd)); } catch(e) {}
+  // Save to localStorage tagged with user_id
+  try {
+    localStorage.setItem('gc_progress', JSON.stringify(pd));
+    localStorage.setItem('gc_progress_uid', userId);
+  } catch(e) {}
   // Save to Supabase
   if (!sb) return;
   try {
@@ -59,15 +62,40 @@ async function saveProgress() {
 
 // ─── PROGRESS: LOAD ───────────────────────────────────────────
 async function loadProgress() {
-  // Always restore localStorage first for instant display
-  applyLocalFallback();
+  // Only load localStorage if it belongs to the current user
+  try {
+    var storedUid = localStorage.getItem('gc_progress_uid');
+    if (storedUid && storedUid === userId) {
+      var local = JSON.parse(localStorage.getItem('gc_progress'));
+      if (local) applyProgressData(local);
+    }
+  } catch(e) {}
 
   // Then sync with server (server data wins if available)
   if (!userId || !sb) return;
   try {
     var result = await sb.from('user_progress').select('data').eq('user_id', userId).single();
-    if (result.data && result.data.data) applyProgressData(result.data.data);
-  } catch(e) {}
+    if (result.data && result.data.data) {
+      applyProgressData(result.data.data);
+    } else {
+      // New account with no server data — ensure clean slate
+      resetLocalState();
+    }
+  } catch(e) {
+    // No record found = new account, reset to clean state
+    resetLocalState();
+  }
+}
+
+function resetLocalState() {
+  current = 0;
+  completed.clear();
+  challengeState.forEach(function(cs) {
+    cs.solved.fill(false);
+    cs.attempts.fill(0);
+    cs.hintsUsed.fill(false);
+    cs.answersUsed.fill(false);
+  });
 }
 function applyProgressData(d) {
   current = d.current_phase || 0;
@@ -385,8 +413,22 @@ async function loadLeaderboard() {
       .select('*')
       .order('phases_completed', { ascending: false })
       .order('challenges_solved', { ascending: false })
-      .limit(50);
-    return result.data || [];
+      .limit(100);
+    var data = result.data || [];
+    // Deduplicate by user_id AND display_name
+    var seenId = {};
+    var seenName = {};
+    var unique = [];
+    for (var i = 0; i < data.length; i++) {
+      var row = data[i];
+      var nameLower = (row.display_name || '').toLowerCase().trim();
+      if (!seenId[row.user_id] && !seenName[nameLower]) {
+        seenId[row.user_id] = true;
+        seenName[nameLower] = true;
+        unique.push(row);
+      }
+    }
+    return unique.slice(0, 50);
   } catch(e) { return []; }
 }
 
@@ -445,6 +487,7 @@ async function doLogout() {
   userName = ''; userEmail = ''; userId = ''; userUsername = '';
   current = 0; completed.clear();
   challengeState.forEach(function(cs) { cs.solved.fill(false); cs.attempts.fill(0); cs.hintsUsed.fill(false); cs.answersUsed.fill(false); });
+  try { localStorage.removeItem('gc_progress'); localStorage.removeItem('gc_progress_uid'); } catch(e) {}
   closeProfile();
   document.getElementById('auth-overlay').style.display = 'flex';
   switchTab('login');
