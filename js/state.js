@@ -121,7 +121,7 @@ function buildNav() {
   });
   const done = phases.filter((_,i) => completed.has(i) && isPhaseChallengesComplete(i)).length;
   document.getElementById('prog-fill').style.width = (done/phases.length*100)+'%';
-  document.getElementById('prog-text').textContent = `${done} / ${phases.length}`;
+  document.getElementById('prog-text').textContent = `${Math.round(done/phases.length*100)}%`;
 }
 
 // ─── RENDER ───────────────────────────────────────────────────

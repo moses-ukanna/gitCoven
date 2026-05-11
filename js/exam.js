@@ -167,6 +167,7 @@ let examStartTime = null;
 let examTimerInterval = null;
 let examTimeRemaining = EXAM_TIME_SECONDS;
 let examResults = null;
+let examOfficialName = '';
 
 // ─── SHUFFLE ─────────────────────────────────────────────────
 function shuffleArray(arr) {
@@ -213,6 +214,68 @@ function selectExamQuestions() {
 // ─── NORMALIZE ───────────────────────────────────────────────
 function examNormalize(str) {
   return str.trim().toLowerCase().replace(/\s+/g,' ').replace(/[""]/g,'"').replace(/['']/g,"'");
+}
+
+// ─── PRE-EXAM FORM ───────────────────────────────────────────
+function openExam() {
+  if (completed.size < phases.length) {
+    alert('Complete all ' + phases.length + ' phases before taking the final exam.');
+    return;
+  }
+  showExamForm();
+}
+
+function showExamForm() {
+  var ca = document.getElementById('content-area');
+  ca.innerHTML =
+    '<div class="exam-container">' +
+      '<div class="exam-form-header">' +
+        '<div class="exam-form-icon"><i class="ti ti-certificate" style="font-size:48px;color:#d4af37"></i></div>' +
+        '<div class="exam-form-title">GitCoven Final Examination</div>' +
+        '<div class="exam-form-sub">30 questions across all 28 phases &middot; 33 seconds per question &middot; 16 minutes 30 seconds</div>' +
+      '</div>' +
+      '<div class="exam-form-card">' +
+        '<div class="exam-form-note">Your name will appear on the certificate exactly as you type it below. Please use your official full name.</div>' +
+        '<div class="exam-form-field">' +
+          '<label class="exam-form-label">Full name (as it should appear on the certificate)</label>' +
+          '<input class="exam-form-input" id="exam-name-input" type="text" placeholder="e.g. Karim Olayinka Adebayo" value="' + (examOfficialName || userName || '').replace(/"/g,'&quot;') + '" autocomplete="name" />' +
+        '</div>' +
+      '</div>' +
+      '<div class="exam-form-rules">' +
+        '<div class="exam-form-rules-title">Exam rules</div>' +
+        '<div class="exam-form-rule"><span class="exam-rule-icon">&#x23F1;</span> You have <strong>16 minutes 30 seconds</strong> — the exam auto-submits when time runs out</div>' +
+        '<div class="exam-form-rule"><span class="exam-rule-icon">&#x1F512;</span> No hints or answers are shown during the exam</div>' +
+        '<div class="exam-form-rule"><span class="exam-rule-icon">&#x2705;</span> You need <strong>70%</strong> to pass — <strong>85%</strong> for Merit — <strong>95%</strong> for Distinction</div>' +
+        '<div class="exam-form-rule"><span class="exam-rule-icon">&#x1F4DC;</span> A downloadable certificate is generated if you pass</div>' +
+        '<div class="exam-form-rule"><span class="exam-rule-icon">&#x1F501;</span> You can retake the exam — questions are reshuffled each time</div>' +
+      '</div>' +
+      '<div class="exam-form-actions">' +
+        '<button class="exam-start-btn" onclick="beginExam()">Begin Exam</button>' +
+        '<button class="exam-back-btn" onclick="showComplete()">Back to dashboard</button>' +
+      '</div>' +
+    '</div>';
+
+  setTimeout(function() {
+    var inp = document.getElementById('exam-name-input');
+    if (inp && !inp.value) inp.focus();
+  }, 200);
+}
+
+function beginExam() {
+  var nameInput = document.getElementById('exam-name-input');
+
+  var name = nameInput ? nameInput.value.trim() : '';
+
+  if (!name) {
+    nameInput.style.borderColor = '#f85149';
+    nameInput.focus();
+    nameInput.placeholder = 'Please enter your full name to continue';
+    return;
+  }
+
+  examOfficialName = name;
+
+  startExam();
 }
 
 // ─── START EXAM ──────────────────────────────────────────────
@@ -399,7 +462,7 @@ function renderExamResults() {
       '<div class="exam-results-header">' +
         '<div class="exam-grade-icon" style="color:' + r.grade.color + '">' + r.grade.icon + '</div>' +
         '<div class="exam-grade-title" style="color:' + r.grade.color + '">' + r.grade.grade + '</div>' +
-        '<div class="exam-grade-subtitle">' + (passed ? 'Congratulations, ' + (userName||'Apprentice') + '!' : 'Keep studying, ' + (userName||'Apprentice') + '. You need 70% to pass.') + '</div>' +
+        '<div class="exam-grade-subtitle">' + (passed ? 'Congratulations, ' + examOfficialName + '!' : 'Keep studying, ' + examOfficialName + '. You need 70% to pass.') + '</div>' +
       '</div>' +
       '<div class="exam-stats-row">' +
         '<div class="exam-stat"><div class="exam-stat-num">' + r.correct + '/' + r.total + '</div><div class="exam-stat-label">Correct</div></div>' +
@@ -409,12 +472,12 @@ function renderExamResults() {
       (passed ?
         '<div class="exam-cert-actions">' +
           '<button class="exam-cert-btn" onclick="generateExamCertificate()">📜 Download Certificate</button>' +
-          '<button class="exam-retake-btn" onclick="startExam()">🔄 Retake Exam</button>' +
+          '<button class="exam-retake-btn" onclick="showExamForm()">🔄 Retake Exam</button>' +
         '</div>' :
         '<div class="exam-cert-actions">' +
-          '<div class="exam-fail-msg">You need 70% to pass. Review the phases you missed and try again.</div>' +
-          '<button class="exam-retake-btn" onclick="startExam()">🔄 Retake Exam</button>' +
-          '<button class="exam-retake-btn" onclick="goto(0)">📖 Review Phases</button>' +
+          '<div class="exam-fail-msg">You scored below 70%. Review the phases you missed and try again.</div>' +
+          '<button class="exam-retake-btn" onclick="showExamForm()">🔄 Retake Exam</button>' +
+          '<button class="exam-retake-btn" onclick="showComplete()">← Back to Dashboard</button>' +
         '</div>') +
       '<div class="exam-review-title">Detailed Results</div>' +
       '<div class="exam-review-list">' + reviewHTML + '</div>' +
@@ -475,9 +538,9 @@ function generateExamCertificate() {
 
   ctx.fillStyle = r.grade.color;
   ctx.font = 'bold 52px Georgia, serif';
-  ctx.fillText(userName || 'Apprentice', 800, 490);
+  ctx.fillText(examOfficialName, 800, 490);
 
-  var nameWidth = ctx.measureText(userName || 'Apprentice').width;
+  var nameWidth = ctx.measureText(examOfficialName).width;
   ctx.strokeStyle = '#30363d'; ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(800 - nameWidth/2 - 20, 505); ctx.lineTo(800 + nameWidth/2 + 20, 505); ctx.stroke();
 
@@ -513,20 +576,20 @@ function generateExamCertificate() {
 
   ctx.fillStyle = r.grade.color;
   ctx.font = 'italic 24px Georgia, serif';
-  ctx.fillText('WiredHash', 550, 940);
-  ctx.fillText('GitCoven', 1050, 940);
+  ctx.fillText('GitCoven', 550, 940);
+  ctx.fillText('WiredHash', 1050, 940);
 
   ctx.fillStyle = '#484f58';
   ctx.font = '13px "Courier New", monospace';
-  ctx.fillText('ORGANIZATION', 550, 965);
-  ctx.fillText('PLATFORM', 1050, 965);
+  ctx.fillText('PLATFORM', 550, 965);
+  ctx.fillText('ORGANISATION', 1050, 965);
 
   ctx.fillStyle = '#30363d';
   ctx.font = '12px "Courier New", monospace';
   ctx.fillText('gitcoven.vercel.app · Exam ID: GCX-' + Date.now().toString(36).toUpperCase() + ' · ' + r.pct + '% ' + r.grade.grade, 800, 1020);
 
   var link = document.createElement('a');
-  link.download = 'GitCoven-Exam-' + r.grade.grade + '-' + (userName || 'User').replace(/\s+/g, '-') + '.png';
+  link.download = 'GitCoven-Exam-' + r.grade.grade + '-' + examOfficialName.replace(/\s+/g, '-') + '.png';
   link.href = canvas.toDataURL('image/png');
   link.click();
 }

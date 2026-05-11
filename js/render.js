@@ -228,7 +228,7 @@ function showComplete() {
   completed.add(current);
   buildNav();
   document.getElementById('prog-fill').style.width = '100%';
-  document.getElementById('prog-text').textContent = `${phases.length} / ${phases.length}`;
+  document.getElementById('prog-text').textContent = '100%';
   const totalChallenges = phases.reduce((a,p) => a + p.challenges.length, 0);
   const totalHints = challengeState.reduce((a,cs) => a + cs.hintsUsed.filter(Boolean).length, 0);
   const totalAnswers = challengeState.reduce((a,cs) => a + cs.answersUsed.filter(Boolean).length, 0);

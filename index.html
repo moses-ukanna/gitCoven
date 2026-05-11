@@ -173,18 +173,27 @@
       <div class="phase-list" id="prof-phase-list"></div>
     </div>
     <div class="profile-section">
-      <div class="profile-section-title">Export / Import Progress</div>
-      <div class="export-box" id="export-code">—</div>
-      <button class="profile-btn" onclick="copyExportCode()">📋 Copy export code</button>
-      <button class="profile-btn" onclick="showImport()">📥 Import from code</button>
-      <div id="import-wrap" style="display:none;margin-top:8px;">
-        <input class="auth-input" id="import-input" placeholder="Paste export code here…" style="margin-bottom:8px;font-size:12px;font-family:JetBrains Mono,monospace;" />
-        <button class="profile-btn" onclick="doImport()">Apply import →</button>
-      </div>
-    </div>
-    <div class="profile-section">
       <button class="profile-btn danger" onclick="doLogout()">Sign out</button>
       <button class="profile-btn danger" onclick="doReset()">Reset all progress</button>
+    </div>
+  </div>
+</div>
+
+<!-- LEADERBOARD PANEL -->
+<div id="leaderboard-panel" onclick="closeLeaderboard(event)">
+  <div class="profile-drawer" style="max-width:440px;">
+    <div class="profile-header">
+      <div class="profile-header-left">
+        <div style="font-size:24px;">🏆</div>
+        <div>
+          <div class="profile-name">Leaderboard</div>
+          <div style="font-size:11px;color:var(--text3);font-family:'JetBrains Mono',monospace;">Top GitCoven learners</div>
+        </div>
+      </div>
+      <button class="profile-close" onclick="closeLeaderboard()">✕</button>
+    </div>
+    <div style="padding:0 20px 20px;display:flex;flex-direction:column;gap:8px;max-height:60vh;overflow-y:auto;" id="leaderboard-list">
+      <div style="text-align:center;color:var(--text3);padding:20px;font-size:13px;">Loading...</div>
     </div>
   </div>
 </div>

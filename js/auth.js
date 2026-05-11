@@ -59,12 +59,15 @@ async function saveProgress() {
 
 // ─── PROGRESS: LOAD ───────────────────────────────────────────
 async function loadProgress() {
-  if (!userId || !sb) { applyLocalFallback(); return; }
+  // Always restore localStorage first for instant display
+  applyLocalFallback();
+
+  // Then sync with server (server data wins if available)
+  if (!userId || !sb) return;
   try {
     var result = await sb.from('user_progress').select('data').eq('user_id', userId).single();
     if (result.data && result.data.data) applyProgressData(result.data.data);
-    else applyLocalFallback();
-  } catch(e) { applyLocalFallback(); }
+  } catch(e) {}
 }
 function applyProgressData(d) {
   current = d.current_phase || 0;
@@ -585,7 +588,14 @@ document.addEventListener('keydown', function(e) {
       showPasswordResetForm();
       return;
     }
-    if (event === 'SIGNED_IN' && session) await handleSession(session);
+    if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION' || event === 'TOKEN_REFRESHED') && session) {
+      await handleSession(session);
+    }
+    if (event === 'SIGNED_OUT') {
+      userId = null;
+      userName = '';
+      document.getElementById('auth-overlay').style.display = 'flex';
+    }
   });
   var result = await sb.auth.getSession();
   if (result.data && result.data.session) {
