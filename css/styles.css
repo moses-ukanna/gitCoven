@@ -448,3 +448,70 @@ code{font-family:'JetBrains Mono',monospace;font-size:12.5px;background:var(--bg
 .pwa-install-btn{padding:7px 14px;background:var(--accent);border:none;border-radius:6px;font-size:13px;font-weight:600;color:#0a0e13;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;}
 .pwa-close-btn{background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;padding:4px;flex-shrink:0;}
 .pwa-close-btn:hover{color:var(--text1);}
+/* ═══════════════════════════════════════════════════
+   FINAL EXAM SYSTEM
+   ═══════════════════════════════════════════════════ */
+.exam-container{max-width:720px;margin:0 auto;padding:20px 0;}
+.exam-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;gap:16px;flex-wrap:wrap;}
+.exam-header-left{display:flex;flex-direction:column;gap:6px;}
+.exam-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.25);border-radius:var(--radius);font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--accent);letter-spacing:1px;}
+.exam-progress-text{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text3);}
+.exam-timer-wrap{text-align:right;}
+.exam-timer-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:1px;margin-bottom:4px;}
+.exam-timer{font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:700;color:var(--accent);line-height:1;}
+.exam-timer-warn{color:#d29922!important;}
+.exam-timer-critical{color:var(--accent-red)!important;animation:timerPulse 1s infinite;}
+@keyframes timerPulse{0%,100%{opacity:1;}50%{opacity:.5;}}
+
+.exam-dots{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:24px;justify-content:center;}
+.exam-dot{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--bg2);border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);cursor:pointer;transition:all .15s;}
+.exam-dot:hover{border-color:var(--accent);color:var(--text1);}
+.exam-dot-current{background:var(--accent);color:var(--bg0);border-color:var(--accent);font-weight:700;}
+.exam-dot-answered{background:rgba(63,185,80,.15);border-color:rgba(63,185,80,.3);color:var(--accent);}
+
+.exam-question-card{background:var(--bg1);border:1px solid var(--border);border-radius:var(--radius);padding:28px 24px;margin-bottom:20px;}
+.exam-q-number{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);letter-spacing:1px;margin-bottom:4px;}
+.exam-q-phase{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent-blue);margin-bottom:16px;}
+.exam-q-text{font-family:'Syne',sans-serif;font-size:17px;font-weight:600;color:var(--text0);line-height:1.6;margin-bottom:20px;}
+.exam-input-row{display:flex;gap:8px;}
+.exam-input{flex:1;padding:10px 14px;background:var(--bg0);border:1px solid var(--border);border-radius:var(--radius);font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--text0);outline:none;transition:border-color .15s;}
+.exam-input:focus{border-color:var(--accent);}
+
+.exam-nav{display:flex;justify-content:space-between;align-items:center;}
+.exam-nav-btn{padding:10px 20px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);font-family:'Syne',sans-serif;font-size:14px;font-weight:600;color:var(--text1);cursor:pointer;transition:all .15s;}
+.exam-nav-btn:hover{border-color:var(--accent);color:var(--accent);}
+.exam-nav-next{background:var(--accent);color:var(--bg0);border-color:var(--accent);}
+.exam-nav-next:hover{opacity:.9;color:var(--bg0);}
+.exam-nav-submit{background:#d4af37;color:#0d1117;border-color:#d4af37;font-weight:700;}
+.exam-nav-submit:hover{opacity:.9;color:#0d1117;}
+
+/* EXAM RESULTS */
+.exam-results{max-width:720px;margin:0 auto;padding:20px 0;}
+.exam-results-header{text-align:center;margin-bottom:28px;}
+.exam-grade-icon{font-size:56px;margin-bottom:8px;}
+.exam-grade-title{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;margin-bottom:4px;}
+.exam-grade-subtitle{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--text2);}
+.exam-stats-row{display:flex;justify-content:center;gap:32px;margin-bottom:24px;flex-wrap:wrap;}
+.exam-stat{text-align:center;}
+.exam-stat-num{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:700;color:var(--text0);}
+.exam-stat-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);letter-spacing:1px;margin-top:2px;}
+.exam-cert-actions{display:flex;gap:12px;justify-content:center;margin-bottom:32px;flex-wrap:wrap;}
+.exam-cert-btn{padding:12px 28px;background:#d4af37;color:#0d1117;border:none;border-radius:var(--radius);font-family:'Syne',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:opacity .15s;}
+.exam-cert-btn:hover{opacity:.9;}
+.exam-retake-btn{padding:12px 24px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);font-family:'Syne',sans-serif;font-size:14px;font-weight:600;color:var(--text1);cursor:pointer;transition:all .15s;}
+.exam-retake-btn:hover{border-color:var(--accent);color:var(--accent);}
+.exam-fail-msg{width:100%;text-align:center;padding:12px;background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.2);border-radius:var(--radius);font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent-red);margin-bottom:8px;}
+.exam-review-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--text1);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.exam-review-list{display:flex;flex-direction:column;gap:8px;}
+.exam-review-item{display:flex;gap:12px;padding:12px;border-radius:var(--radius);background:var(--bg1);border:1px solid var(--border);}
+.exam-review-correct{border-color:rgba(63,185,80,.2);}
+.exam-review-wrong{border-color:rgba(248,81,73,.2);}
+.exam-review-icon{width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:12px;font-weight:700;flex-shrink:0;margin-top:2px;}
+.exam-review-correct .exam-review-icon{background:rgba(63,185,80,.15);color:var(--accent);}
+.exam-review-wrong .exam-review-icon{background:rgba(248,81,73,.15);color:var(--accent-red);}
+.exam-review-content{flex:1;min-width:0;}
+.exam-review-q{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text1);margin-bottom:4px;}
+.exam-review-ans{font-family:'JetBrains Mono',monospace;font-size:12px;}
+.exam-review-ans.correct{color:var(--accent);}
+.exam-review-ans.wrong{color:var(--accent-red);}
+.exam-review-ans.expected{color:var(--accent-blue);margin-top:2px;}

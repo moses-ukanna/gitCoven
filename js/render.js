@@ -248,6 +248,9 @@ function showComplete() {
       <button class="cert-btn" onclick="generateCertificate()" style="margin-top:12px;">
         &#x1F4DC; Download Certificate
       </button>
+      <button onclick="openExam()" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:#d4af37;border:none;border-radius:var(--radius);font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#0d1117;cursor:pointer;margin-top:8px;transition:opacity .15s;">
+        📝 Take Final Exam
+      </button>
       <button onclick="openLeaderboard()" style="display:inline-flex;align-items:center;gap:8px;padding:10px 24px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);font-family:'Syne',sans-serif;font-size:15px;font-weight:600;color:var(--text1);cursor:pointer;margin-top:8px;transition:all .15s;">
         &#x1F3C6; View Leaderboard
       </button>
